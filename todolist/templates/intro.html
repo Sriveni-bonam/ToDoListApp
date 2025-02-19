@@ -1,0 +1,76 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AGRICULTURE</title>
+    <style>
+        h1,p{
+            color:white;
+        }
+        #progress
+        {
+            width:300px;
+            height:7px;
+            border:2px solid white;
+            border-radius:34px;
+            position:relative;
+            animation:animate 1s cubic-bezier(1,0,0,5,1) forwards;
+        }
+        #progress span{
+            position:absolute;
+            width:0%;
+            height:7px;
+            background-color:rgb(63, 63, 233);
+            animation-name:load;
+            animation-duration:2s;
+            animation-fill-mode:forwards;
+        }
+        #center
+        {
+           display:flex;
+           flex-direction:column;
+           align-items:center;
+           justify-content:center;
+           height:100vh;
+        }
+        @keyframes load
+        {
+            25%
+            {
+                width:25%;
+            }
+            50%
+            {
+                width:50%;
+            }
+            75%
+            {
+                width:75%;
+            }
+            90%
+            {
+                width:90%;
+            }
+            100%
+            {
+              width:100%;
+            }
+        }
+    </style>
+    <script>
+        setTimeout(() => {
+            window.location.href = "{% url 'login' %}";  <!-- Replace with the actual URL name -->
+        }, 2500); // 2500 milliseconds = 2.5 seconds (same as the animation duration)
+    </script>
+</head>
+<body>
+    <div id="center">
+        <img src="{% static 'Images/todologo.avif' %}" width="150px" height="150px"/>
+        <div id="progress"><span></span></div>
+        <p style="font-size:30px;margin-bottom:-10px;color:blue;">Every completed task is a victory.</p>
+        <p style="font-size:30px;color:blue;"> Celebrate them!</p>
+    </div>
+</body>
+</html>

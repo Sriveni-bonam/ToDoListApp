@@ -1,0 +1,46 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Task</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+    <!-- Task Form -->
+    <div class="container">
+        <h2>Edit Task</h2>
+        <form method="POST">
+            {% csrf_token %}
+            
+            <!-- Title Field -->
+            <input type="text" name="title" placeholder="Task Title" value="{{ task.title }}" required>
+            
+            <!-- Description Field -->
+            <textarea name="description" placeholder="Task Description">{{ task.description }}</textarea>
+            
+            <!-- Due Date Field -->
+            <input type="date" name="due_date" value="{{ task.due_date|date:'Y-m-d' }}">
+            
+            <!-- Priority Field -->
+            <select name="priority">
+                <option value="High" {% if task.priority == "High" %}selected{% endif %}>🔥 High</option>
+                <option value="Medium" {% if task.priority == "Medium" %}selected{% endif %}>⚡ Medium</option>
+                <option value="Low" {% if task.priority == "Low" %}selected{% endif %}>✅ Low</option>
+            </select>
+            
+            <!-- Category Field -->
+            <select name="category">
+                {% for category in categories %}
+                    <option value="{{ category.id }}" {% if category.id == task.category.id %}selected{% endif %}>{{ category.name }}</option>
+                {% endfor %}
+            </select>
+
+            <button type="submit" class="edit-save-button">Save Changes</button>
+        </form>
+
+        <a href="{% url 'index' %}" class="edit-back-link">Back to Task List</a>
+    </div>
+</body>
+</html>

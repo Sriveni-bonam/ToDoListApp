@@ -1,0 +1,128 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-Do List</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="navbar-left">
+            <h1 style="color:white;">📌 My To-Do List</h1>
+        </div>
+        <div class="navbar-right">
+                <a href="{% url 'logout' %}">Logout</a> <!-- Logout link -->
+        </div>
+    </nav>
+    <br><br>
+    <div class="container">
+        <!-- Top Buttons: Add Task and Task List -->
+        <div class="top-buttons">
+            <button id="add-task-btn" onclick="toggleView('add-task')">➕ Add Task</button>
+            <button id="task-list-btn" onclick="toggleView('task-list')">📝 Task List</button>
+        </div>
+
+        <!-- Search Bar -->
+        <div class="search-bar" id="search-bar">
+            <input type="text" id="search-input" placeholder="Search tasks..." oninput="searchTasks()">
+        </div>
+
+        <!-- Task Form (Initially Hidden) -->
+        <div id="add-task-view" class="hidden">
+            <h2>Add New Task</h2>
+            <form id="task-form" method="POST" action="{% url 'add_task' %}">
+                {% csrf_token %}
+                <input type="text" name="title" placeholder="Task Title" required>
+                <textarea name="description" placeholder="Task Description"></textarea>
+                <input type="date" name="due_date">
+                <select name="priority">
+                    <option value="High">🔥 High</option>
+                    <option value="Medium" selected>⚡ Medium</option>
+                    <option value="Low">✅ Low</option>
+                </select>
+                <select name="category">
+                    {% for category in categories %}
+                        <option value="{{ category.id }}" {% if category.name == 'Personal' %}selected{% endif %}>
+                            {{ category.name }}
+                        </option>
+                    {% endfor %}
+                </select>
+                <button type="submit">Add Task</button>
+            </form>
+        </div>
+
+        <!-- Task List (Initially Visible) -->
+        <div id="task-list-view">
+            <!-- Filters -->
+            <div class="filters">
+                <h2>Filter Tasks</h2>
+                
+                <!-- Priority Filter -->
+                <select id="priority-filter" onchange="filterTasks()">
+                    <option value="">All Priorities</option>
+                    <option value="High">🔥 High</option>
+                    <option value="Medium">⚡ Medium</option>
+                    <option value="Low">✅ Low</option>
+                </select>
+
+                <!-- Category Filter -->
+                <select id="category-filter" onchange="filterTasks()">
+                    <option value="">All Categories</option>
+                    {% for category in categories %}
+                        <option value="{{ category.id }}">{{ category.name }}</option>
+                    {% endfor %}
+                </select>
+
+                <!-- Remove Filter Button -->
+                <button id="remove-filters-btn" onclick="removeFilters()" style="margin-bottom:20px;">❌ Remove Filters</button>
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="progress-bar">
+                <div class="progress" id="task-progress"></div>
+            </div>
+
+            <!-- Task Count Display -->
+            <div class="task-count">
+                <span id="pending-count">Pending: 0</span>
+                <span id="completed-count">Completed: 0</span>
+            </div>
+
+            <ul class="task-list">
+                {% for task in tasks %}
+                <li class="task-item {% if task.completed %}completed{% endif %}" 
+                    data-category-id="{{ task.category.id }}" 
+                    data-due-date="{{ task.due_date }}" data-status="{{ task.completed }}">
+            
+                    <!-- Task Details Container (Left Side) -->
+                    <div class="task-details">
+                        <span class="task-title">{{ task.title }}</span>
+                        <div class="task-meta">
+                            <span class="task-priority priority-{{ task.priority|lower }}">{{ task.priority }}</span>
+                            <span class="task-category" data-category-id="{{ task.category.id }}">{{ task.category.name }}</span>
+                            <span class="task-due">📅 {{ task.due_date }}</span>
+                        </div>
+                    </div>
+            
+                    <!-- Task Actions Container (Right Side) -->
+                    <div class="task-actions">
+                        <a href="{% url 'complete_task' task.id %}" class="task-btn complete">✔️</a>
+                        <a href="{% url 'edit_task' task.id %}" class="task-btn edit">✏️</a>
+                        <a href="{% url 'delete_task' task.id %}" class="task-btn delete">❌</a>
+                    </div>
+            
+                </li>
+            
+                {% empty %}
+                <p class="no-tasks">No tasks found.</p>
+                {% endfor %}
+            </ul>            
+        </div>
+    </div>
+
+    <script src="{% static 'js/script.js' %}"></script>
+</body>
+</html>
